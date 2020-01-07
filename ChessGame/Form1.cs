@@ -22,6 +22,8 @@ namespace ChessGame
 
         private int ClickX = 0;
         private int ClickY = 0;
+
+        private bool ChessDoing = false;
         
         public class ChessObject
         {
@@ -118,6 +120,12 @@ namespace ChessGame
 
                 lblBtnloc.Text = String.Format($"X : {ch}, Y : {8 - ClickY}");
 
+                if(!ChessDoing)
+                {
+                    if (tmp.ForeColor.ToString() != "Color [ControlText]") lblBtnColor.Text = String.Format($"{tmp.ForeColor.ToString()}");
+                    if (tmp.Text != "") lblBtnText.Text = String.Format($"{tmp.Text}");
+                }
+
                 MoveableLocation(ClickX, ClickY, ButtonList[ClickY][ClickX]);
             }
             else
@@ -128,98 +136,126 @@ namespace ChessGame
 
         private void MoveableLocation(int x, int y, Button pButton)
         {
-            if (pButton.Text == "" && pButton.FlatAppearance.BorderColor == Color.Gray) return;
+            Color pBorderColor = pButton.FlatAppearance.BorderColor;
 
-            for (int i = 0; i < BOARD_ROW_COUNT; i++)
+            if (pButton.Text == "" && pBorderColor == Color.Gray) return;
+
+            if(!ChessDoing)
             {
-                for (int j = 0; j < BOARD_COLUMN_COUNT; j++)
+                for (int i = 0; i < BOARD_ROW_COUNT; i++)
                 {
-                    ButtonList[i][j].FlatAppearance.BorderColor = Color.Gray;
+                    for (int j = 0; j < BOARD_COLUMN_COUNT; j++)
+                    {
+                        ButtonList[i][j].FlatAppearance.BorderColor = Color.Gray;
+                    }
                 }
             }
 
-            switch (pButton.Text)
+            if (pBorderColor == Color.Crimson)
             {
-                case "pa":
-                    if(true)
-                    {
-                        int CanMove = 1;
+                ButtonList[y][x].Text = lblBtnText.Text;
+                ButtonList[y][x].ForeColor = lblBtnColor.Text == "Color [Red]" ? Color.Red : Color.Blue;
+                ChessDoing = false;
 
-                        if (pButton.ForeColor == Color.Blue)
+                for (int i = 0; i < BOARD_ROW_COUNT; i++)
+                {
+                    for (int j = 0; j < BOARD_COLUMN_COUNT; j++)
+                    {
+                        ButtonList[i][j].FlatAppearance.BorderColor = Color.Gray;
+                    }
+                }
+
+                return;
+            }
+
+            if(!ChessDoing)
+            {
+                switch (pButton.Text)
+                {
+                    case "pa":
+                        if (true)
                         {
-                            if (BlueTeamList[x].GetMoveCount() == 0) CanMove = 2;
+                            int CanMove = 1;
 
-                            for (int i = 1; i <= CanMove && i + y < BOARD_ROW_COUNT; i++)
+                            if (pButton.ForeColor == Color.Blue)
                             {
-                                ButtonList[y + i][x].FlatAppearance.BorderColor = Color.Crimson;
+                                if (BlueTeamList[x].GetMoveCount() == 0) CanMove = 2;
+
+                                for (int i = 1; i <= CanMove && i + y < BOARD_ROW_COUNT; i++)
+                                {
+                                    ButtonList[y + i][x].FlatAppearance.BorderColor = Color.Crimson;
+                                }
                             }
+                            else
+                            {
+                                if (RedTeamList[x].GetMoveCount() == 0) CanMove = 2;
+
+                                for (int i = 1; i <= CanMove && y - i < BOARD_ROW_COUNT; i++)
+                                {
+                                    ButtonList[y - i][x].FlatAppearance.BorderColor = Color.Crimson;
+                                }
+                            }
+
+                            ButtonList[y][x].Text = "";
+                            ChessDoing = true;
                         }
-                        else
+                        break;
+
+                    case "ca":
+                        if (pButton.BackColor == Color.Blue)
                         {
-                            if (RedTeamList[x].GetMoveCount() == 0) CanMove = 2;
-                            
-                            for (int i = 1; i <= CanMove && y - i < BOARD_ROW_COUNT; i++)
-                            {
-                                ButtonList[y - i][x].FlatAppearance.BorderColor = Color.Crimson;
-                            }
+
                         }
-                    }
-                    break;
+                        else if (pButton.BackColor == Color.Red)
+                        {
 
-                case "ca":
-                    if (pButton.BackColor == Color.Blue)
-                    {
+                        }
+                        break;
 
-                    }
-                    else if (pButton.BackColor == Color.Red)
-                    {
+                    case "kn":
+                        if (pButton.BackColor == Color.Blue)
+                        {
 
-                    }
-                    break;
+                        }
+                        else if (pButton.BackColor == Color.Red)
+                        {
 
-                case "kn":
-                    if (pButton.BackColor == Color.Blue)
-                    {
+                        }
+                        break;
 
-                    }
-                    else if (pButton.BackColor == Color.Red)
-                    {
+                    case "vi":
+                        if (pButton.BackColor == Color.Blue)
+                        {
 
-                    }
-                    break;
+                        }
+                        else if (pButton.BackColor == Color.Red)
+                        {
 
-                case "vi":
-                    if (pButton.BackColor == Color.Blue)
-                    {
+                        }
+                        break;
 
-                    }
-                    else if (pButton.BackColor == Color.Red)
-                    {
+                    case "Qu":
+                        if (pButton.BackColor == Color.Blue)
+                        {
 
-                    }
-                    break;
+                        }
+                        else if (pButton.BackColor == Color.Red)
+                        {
 
-                case "Qu":
-                    if (pButton.BackColor == Color.Blue)
-                    {
+                        }
+                        break;
 
-                    }
-                    else if (pButton.BackColor == Color.Red)
-                    {
+                    case "Ki":
+                        if (pButton.BackColor == Color.Blue)
+                        {
 
-                    }
-                    break;
+                        }
+                        else if (pButton.BackColor == Color.Red)
+                        {
 
-                case "Ki":
-                    if (pButton.BackColor == Color.Blue)
-                    {
-
-                    }
-                    else if (pButton.BackColor == Color.Red)
-                    {
-
-                    }
-                    break;
+                        }
+                        break;
+                }
             }
         }
 

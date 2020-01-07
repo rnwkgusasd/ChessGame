@@ -30,6 +30,8 @@
         {
             this.button1 = new System.Windows.Forms.Button();
             this.lblBtnloc = new System.Windows.Forms.Label();
+            this.lblBtnText = new System.Windows.Forms.Label();
+            this.lblBtnColor = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // button1
@@ -50,11 +52,31 @@
             this.lblBtnloc.TabIndex = 1;
             this.lblBtnloc.Text = "CLICK_BTN_LOC";
             // 
+            // lblBtnText
+            // 
+            this.lblBtnText.AutoSize = true;
+            this.lblBtnText.Location = new System.Drawing.Point(28, 188);
+            this.lblBtnText.Name = "lblBtnText";
+            this.lblBtnText.Size = new System.Drawing.Size(110, 12);
+            this.lblBtnText.TabIndex = 2;
+            this.lblBtnText.Text = "CLICK_BTN_TEXT";
+            // 
+            // lblBtnColor
+            // 
+            this.lblBtnColor.AutoSize = true;
+            this.lblBtnColor.Location = new System.Drawing.Point(28, 209);
+            this.lblBtnColor.Name = "lblBtnColor";
+            this.lblBtnColor.Size = new System.Drawing.Size(120, 12);
+            this.lblBtnColor.TabIndex = 3;
+            this.lblBtnColor.Text = "CLICK_BTN_COLOR";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 524);
+            this.Controls.Add(this.lblBtnColor);
+            this.Controls.Add(this.lblBtnText);
             this.Controls.Add(this.lblBtnloc);
             this.Controls.Add(this.button1);
             this.Name = "Form1";
@@ -68,6 +90,8 @@
 
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label lblBtnloc;
+        private System.Windows.Forms.Label lblBtnText;
+        private System.Windows.Forms.Label lblBtnColor;
     }
 }
 
