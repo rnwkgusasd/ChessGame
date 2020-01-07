@@ -14,17 +14,55 @@ namespace ChessGame
     {
         public List<Button[]> ButtonList = new List<Button[]>();
 
+        public List<ChessObject> BlueTeamList = new List<ChessObject>();
+        public List<ChessObject> RedTeamList = new List<ChessObject>();
+
         public static int BOARD_ROW_COUNT       = 8;
         public static int BOARD_COLUMN_COUNT    = 8;
         
-        public class ObjectsNames
+        public class ChessObject
         {
-            public static string PAWN = "pa";
+            private string Name = "";
+            private int MoveCount = 0;
+            private int X = 0;
+            private int Y = 0;
+
+            private Color TeamColor;
+
+            public ChessObject(string pName, Color tColor)
+            {
+                Name = pName;
+                TeamColor = tColor;
+            }
+
+            public string GetName()
+            {
+                return Name;
+            }
+
+            public Color GetColor()
+            {
+                return TeamColor;
+            }
+
+            public void SetLocation(int x, int y)
+            {
+                X = x;
+                Y = y;
+            }
+
+            public void MoveTo(int x, int y)
+            {
+                SetLocation(x, y);
+                MoveCount++;
+            }
+
+            public static string PAWN   = "pa";
             public static string CASTLE = "ca";
             public static string KNIGHT = "kn";
             public static string VISHOP = "vi";
-            public static string QUEEN = "Qu";
-            public static string KING = "Ki";
+            public static string QUEEN  = "Qu";
+            public static string KING   = "Ki";
         }
 
         public Form1()
@@ -50,7 +88,6 @@ namespace ChessGame
                     tButtons[j].FlatStyle = FlatStyle.Flat;
                     tButtons[j].FlatAppearance.BorderColor = (i + j) % 2 == 0 ? Color.White : Color.Black;
                     tButtons[j].BackColor = (i + j) % 2 == 0 ? Color.White : Color.Black;
-                    tButtons[j].ForeColor = Color.Yellow;
                     tButtons[j].Size = new Size(50, 50);
                 }
 
@@ -88,11 +125,76 @@ namespace ChessGame
                     Controls.Add(ButtonList[i][j]);
                 }
             }
+
+            SetBoard();
+        }
+
+        private void SetChess()
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    if (i == 0) BlueTeamList.Add(new ChessObject(ChessObject.PAWN, Color.Blue));
+
+                    if (i == 1) RedTeamList.Add(new ChessObject(ChessObject.PAWN, Color.Red));
+                }
+            }
+
+            ListSet(ref BlueTeamList, Color.Blue);
+            ListSet(ref RedTeamList, Color.Red);
+        }
+
+        private void ListSet(ref List<ChessObject> pList, Color pColor)
+        {
+            pList.Add(new ChessObject(ChessObject.CASTLE, pColor));
+            pList.Add(new ChessObject(ChessObject.KNIGHT, pColor));
+            pList.Add(new ChessObject(ChessObject.VISHOP, pColor));
+            pList.Add(new ChessObject(ChessObject.KNIGHT, pColor));
+            pList.Add(new ChessObject(ChessObject.QUEEN, pColor));
+            pList.Add(new ChessObject(ChessObject.VISHOP, pColor));
+            pList.Add(new ChessObject(ChessObject.KNIGHT, pColor));
+            pList.Add(new ChessObject(ChessObject.CASTLE, pColor));
         }
 
         private void SetBoard()
         {
+            SetChess();
 
+            for (int i = 0; i < BOARD_ROW_COUNT; i++)
+            {
+                for (int j = 0; j < BOARD_COLUMN_COUNT; j++)
+                {
+                    if (i == 1) ButtonList[i][j].Text = BlueTeamList[i].GetName();
+                    if (i == 6) ButtonList[i][j].Text = RedTeamList[i].GetName();
+
+                    if (i == 0 || i == 1) ButtonList[i][j].ForeColor = Color.Blue;
+                    if (i == 6 || i == 7) ButtonList[i][j].ForeColor = Color.Red;
+                }
+            }
+
+            ButtonSet();
+        }
+
+        private void ButtonSet()
+        {
+            ButtonList[0][0].Text = BlueTeamList[8].GetName();
+            ButtonList[0][1].Text = BlueTeamList[9].GetName();
+            ButtonList[0][2].Text = BlueTeamList[10].GetName();
+            ButtonList[0][3].Text = BlueTeamList[11].GetName();
+            ButtonList[0][4].Text = BlueTeamList[12].GetName();
+            ButtonList[0][5].Text = BlueTeamList[13].GetName();
+            ButtonList[0][6].Text = BlueTeamList[14].GetName();
+            ButtonList[0][7].Text = BlueTeamList[15].GetName();
+
+            ButtonList[7][0].Text = RedTeamList[8].GetName();
+            ButtonList[7][1].Text = RedTeamList[9].GetName();
+            ButtonList[7][2].Text = RedTeamList[10].GetName();
+            ButtonList[7][3].Text = RedTeamList[11].GetName();
+            ButtonList[7][4].Text = RedTeamList[12].GetName();
+            ButtonList[7][5].Text = RedTeamList[13].GetName();
+            ButtonList[7][6].Text = RedTeamList[14].GetName();
+            ButtonList[7][7].Text = RedTeamList[15].GetName();
         }
     }
 }
