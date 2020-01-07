@@ -14,20 +14,23 @@ namespace ChessGame
     {
         public List<Button[]> ButtonList = new List<Button[]>();
 
-        public List<ChessObject> BlueTeamList = new List<ChessObject>();
-        public List<ChessObject> RedTeamList = new List<ChessObject>();
+        public List<ChessObject> BlueTeamList   = new List<ChessObject>();
+        public List<ChessObject> RedTeamList    = new List<ChessObject>();
 
         public static int BOARD_ROW_COUNT       = 8;
         public static int BOARD_COLUMN_COUNT    = 8;
+
+        private int ClickX = 0;
+        private int ClickY = 0;
         
         public class ChessObject
         {
-            private string Name = "";
-            private int MoveCount = 0;
-            private int X = 0;
-            private int Y = 0;
+            private readonly string  Name        = "";
+            private int     MoveCount   = 0;
+            private int     X           = 0;
+            private int     Y           = 0;
 
-            private Color TeamColor;
+            private readonly Color TeamColor;
 
             public ChessObject(string pName, Color tColor)
             {
@@ -43,6 +46,11 @@ namespace ChessGame
             public Color GetColor()
             {
                 return TeamColor;
+            }
+
+            public int GetMoveCount()
+            {
+                return MoveCount;
             }
 
             public void SetLocation(int x, int y)
@@ -84,14 +92,134 @@ namespace ChessGame
 
                 for (int j = 0; j < BOARD_COLUMN_COUNT; j++)
                 {
-                    tButtons[j] = new Button();
-                    tButtons[j].FlatStyle = FlatStyle.Flat;
-                    tButtons[j].FlatAppearance.BorderColor = (i + j) % 2 == 0 ? Color.White : Color.Black;
-                    tButtons[j].BackColor = (i + j) % 2 == 0 ? Color.White : Color.Black;
-                    tButtons[j].Size = new Size(50, 50);
+                    tButtons[j] = new Button
+                    {
+                        FlatStyle = FlatStyle.Flat,
+                        Size = new Size(50, 50),
+                        BackColor = (i + j) % 2 == 0 ? Color.White : Color.Black
+                    };
+                    tButtons[j].FlatAppearance.BorderColor = Color.Gray;
+                    tButtons[j].Click += ButtonClickEvent;
                 }
-
                 ButtonList.Add(tButtons);
+            }
+        }
+
+        private void ButtonClickEvent(object sender, EventArgs e)
+        {
+            Button tmp = (Button)sender;
+
+            if(tmp.BackColor != Color.Chartreuse)
+            {
+                ClickX = (tmp.Location.X - 172) / 55;
+                ClickY = (tmp.Location.Y - 39) / 55;
+
+                char ch = Convert.ToChar('A' + ClickX);
+
+                lblBtnloc.Text = String.Format($"X : {ch}, Y : {8 - ClickY}");
+
+                MoveableLocation(ClickX, ClickY, ButtonList[ClickY][ClickX]);
+            }
+            else
+            {
+
+            }
+        }
+
+        private void MoveableLocation(int x, int y, Button pButton)
+        {
+            if (pButton.Text == "" && pButton.FlatAppearance.BorderColor == Color.Gray) return;
+
+            for (int i = 0; i < BOARD_ROW_COUNT; i++)
+            {
+                for (int j = 0; j < BOARD_COLUMN_COUNT; j++)
+                {
+                    ButtonList[i][j].FlatAppearance.BorderColor = Color.Gray;
+                }
+            }
+
+            switch (pButton.Text)
+            {
+                case "pa":
+                    if(true)
+                    {
+                        int CanMove = 1;
+
+                        if (pButton.ForeColor == Color.Blue)
+                        {
+                            if (BlueTeamList[x].GetMoveCount() == 0) CanMove = 2;
+
+                            for (int i = 1; i <= CanMove && i + y < BOARD_ROW_COUNT; i++)
+                            {
+                                ButtonList[y + i][x].FlatAppearance.BorderColor = Color.Crimson;
+                            }
+                        }
+                        else
+                        {
+                            if (RedTeamList[x].GetMoveCount() == 0) CanMove = 2;
+                            
+                            for (int i = 1; i <= CanMove && y - i < BOARD_ROW_COUNT; i++)
+                            {
+                                ButtonList[y - i][x].FlatAppearance.BorderColor = Color.Crimson;
+                            }
+                        }
+                    }
+                    break;
+
+                case "ca":
+                    if (pButton.BackColor == Color.Blue)
+                    {
+
+                    }
+                    else if (pButton.BackColor == Color.Red)
+                    {
+
+                    }
+                    break;
+
+                case "kn":
+                    if (pButton.BackColor == Color.Blue)
+                    {
+
+                    }
+                    else if (pButton.BackColor == Color.Red)
+                    {
+
+                    }
+                    break;
+
+                case "vi":
+                    if (pButton.BackColor == Color.Blue)
+                    {
+
+                    }
+                    else if (pButton.BackColor == Color.Red)
+                    {
+
+                    }
+                    break;
+
+                case "Qu":
+                    if (pButton.BackColor == Color.Blue)
+                    {
+
+                    }
+                    else if (pButton.BackColor == Color.Red)
+                    {
+
+                    }
+                    break;
+
+                case "Ki":
+                    if (pButton.BackColor == Color.Blue)
+                    {
+
+                    }
+                    else if (pButton.BackColor == Color.Red)
+                    {
+
+                    }
+                    break;
             }
         }
 
@@ -99,11 +227,12 @@ namespace ChessGame
         {
             for(int i = 0; i < BOARD_ROW_COUNT; i++)
             {
-                Label Alphabet = new Label();
-                
-                Alphabet.Text = Convert.ToChar('A' + i).ToString();
-                Alphabet.Size = new Size(20, 20);
-                Alphabet.Location = new Point(190 + (i * 55), 18);
+                Label Alphabet = new Label
+                {
+                    Text = Convert.ToChar('A' + i).ToString(),
+                    Size = new Size(20, 20),
+                    Location = new Point(190 + (i * 55), 18)
+                };
 
                 Controls.Add(Alphabet);
 
@@ -113,19 +242,18 @@ namespace ChessGame
 
                     if (j == 0)
                     {
-                        Label Number = new Label();
+                        Label Number = new Label
+                        {
+                            Text = (8 - i).ToString(),
+                            Size = new Size(20, 20),
+                            Location = new Point(150, 60 + (i * 55))
+                        };
 
-                        Number.Text = (8 - i).ToString();
-                        Number.Size = new Size(20, 20);
-                        Number.Location = new Point(150, 60 + (i * 55));
-                        
                         Controls.Add(Number);
                     }
-
                     Controls.Add(ButtonList[i][j]);
                 }
             }
-
             SetBoard();
         }
 
@@ -151,7 +279,7 @@ namespace ChessGame
             pList.Add(new ChessObject(ChessObject.KNIGHT, pColor));
             pList.Add(new ChessObject(ChessObject.VISHOP, pColor));
             pList.Add(new ChessObject(ChessObject.KNIGHT, pColor));
-            pList.Add(new ChessObject(ChessObject.QUEEN, pColor));
+            pList.Add(new ChessObject(ChessObject.QUEEN,  pColor));
             pList.Add(new ChessObject(ChessObject.VISHOP, pColor));
             pList.Add(new ChessObject(ChessObject.KNIGHT, pColor));
             pList.Add(new ChessObject(ChessObject.CASTLE, pColor));
