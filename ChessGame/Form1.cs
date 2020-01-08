@@ -23,6 +23,9 @@ namespace ChessGame
         private int ClickX = 0;
         private int ClickY = 0;
 
+        private int PrevX = 0;
+        private int PrevY = 0;
+
         private bool ChessDoing = false;
         
         public class ChessObject
@@ -54,6 +57,12 @@ namespace ChessGame
             {
                 return MoveCount;
             }
+
+            public Point GetLocation()
+            {
+                return new Point(X, Y);
+            }
+
 
             public void SetLocation(int x, int y)
             {
@@ -98,7 +107,8 @@ namespace ChessGame
                     {
                         FlatStyle = FlatStyle.Flat,
                         Size = new Size(50, 50),
-                        BackColor = (i + j) % 2 == 0 ? Color.White : Color.Black
+                        BackColor = (i + j) % 2 == 0 ? Color.White : Color.Black,
+                        ForeColor = Color.Black
                     };
                     tButtons[j].FlatAppearance.BorderColor = Color.Gray;
                     tButtons[j].Click += ButtonClickEvent;
@@ -122,7 +132,7 @@ namespace ChessGame
 
                 if(!ChessDoing)
                 {
-                    if (tmp.ForeColor.ToString() != "Color [ControlText]") lblBtnColor.Text = String.Format($"{tmp.ForeColor.ToString()}");
+                    if (tmp.ForeColor.ToString() != "Color [ControlText]") lblBtnColor.Text = String.Format($"{tmp.ForeColor}");
                     if (tmp.Text != "") lblBtnText.Text = String.Format($"{tmp.Text}");
                 }
 
@@ -151,7 +161,7 @@ namespace ChessGame
                 }
             }
 
-            if (pBorderColor == Color.Crimson)
+            if (pBorderColor == Color.Crimson || pBorderColor == Color.Chartreuse)
             {
                 ButtonList[y][x].Text = lblBtnText.Text;
                 ButtonList[y][x].ForeColor = lblBtnColor.Text == "Color [Red]" ? Color.Red : Color.Blue;
@@ -165,54 +175,145 @@ namespace ChessGame
                     }
                 }
 
+                if(pButton.ForeColor == Color.Blue)
+                {
+                    for(int i = 0; i < BlueTeamList.Count; i++)
+                    {
+                        if(BlueTeamList[i].GetLocation() == new Point(PrevX, PrevY))
+                        {
+                            BlueTeamList[i].MoveTo(x, y);
+                        }
+                    }
+                }
+                else if (pButton.ForeColor == Color.Red)
+                {
+                    for (int i = 0; i < BlueTeamList.Count; i++)
+                    {
+                        if (RedTeamList[i].GetLocation() == new Point(PrevX, PrevY))
+                        {
+                            RedTeamList[i].MoveTo(x, y);
+                        }
+                    }
+                }
+
                 return;
             }
 
             if(!ChessDoing)
             {
+                #region Chess Object Move
+
                 switch (pButton.Text)
                 {
                     case "pa":
-                        if (true)
+                        #region Pawn
+                        int CanMove = 1;
+                        int pMoveCount = 0;
+                        ButtonList[y][x].Text = "";
+
+                        if (pButton.ForeColor == Color.Blue)
                         {
-                            int CanMove = 1;
-
-                            if (pButton.ForeColor == Color.Blue)
+                            for (int i = 0; i < BlueTeamList.Count; i++)
                             {
-                                if (BlueTeamList[x].GetMoveCount() == 0) CanMove = 2;
-
-                                for (int i = 1; i <= CanMove && i + y < BOARD_ROW_COUNT; i++)
-                                {
-                                    ButtonList[y + i][x].FlatAppearance.BorderColor = Color.Crimson;
-                                }
-                            }
-                            else
-                            {
-                                if (RedTeamList[x].GetMoveCount() == 0) CanMove = 2;
-
-                                for (int i = 1; i <= CanMove && y - i < BOARD_ROW_COUNT; i++)
-                                {
-                                    ButtonList[y - i][x].FlatAppearance.BorderColor = Color.Crimson;
-                                }
+                                if (BlueTeamList[i].GetLocation() == new Point(x, y))
+                                    pMoveCount = BlueTeamList[i].GetMoveCount();
                             }
 
-                            ButtonList[y][x].Text = "";
-                            ChessDoing = true;
+                            if (pMoveCount == 0) CanMove = 2;
+
+                            for (int i = 0; i <= CanMove && i + y < BOARD_ROW_COUNT && ButtonList[y + i][x].Text == ""; i++)
+                            {
+                                ButtonList[y + i][x].FlatAppearance.BorderColor = Color.Crimson;
+                            }
                         }
+                        else
+                        {
+                            for (int i = 0; i < BlueTeamList.Count; i++)
+                            {
+                                if (RedTeamList[i].GetLocation() == new Point(x, y))
+                                    pMoveCount = RedTeamList[i].GetMoveCount();
+                            }
+
+                            if (pMoveCount == 0) CanMove = 2;
+
+                            for (int i = 0; i <= CanMove && y - i < BOARD_ROW_COUNT && ButtonList[y - i][x].Text == ""; i++)
+                            {
+                                ButtonList[y - i][x].FlatAppearance.BorderColor = Color.Crimson;
+                            }
+                        }
+
+                        ButtonList[y][x].ForeColor = Color.Black;
+                        PrevX = x;
+                        PrevY = y;
+
+                        ChessDoing = true;
+                        #endregion
                         break;
 
                     case "ca":
-                        if (pButton.BackColor == Color.Blue)
-                        {
+                        #region Castle
+                        ButtonList[y][x].Text = "";
 
-                        }
-                        else if (pButton.BackColor == Color.Red)
+                        for (int i = y - 1; i >= 0 && pButton.ForeColor != ButtonList[i][x].ForeColor; i--)
                         {
-
+                            ButtonList[i][x].FlatAppearance.BorderColor = Color.Crimson;
+                            if (pButton.ForeColor == Color.Blue)
+                            {
+                                if (ButtonList[i][x].ForeColor == Color.Red) break;
+                            }
+                            else if (pButton.ForeColor == Color.Red)
+                            {
+                                if (ButtonList[i][x].ForeColor == Color.Blue) break;
+                            }
                         }
+
+                        for (int i = y + 1; i < BOARD_ROW_COUNT && pButton.ForeColor != ButtonList[i][x].ForeColor; i++)
+                        {
+                            ButtonList[i][x].FlatAppearance.BorderColor = Color.Crimson;
+                            if (pButton.ForeColor == Color.Blue)
+                            {
+                                if (ButtonList[i][x].ForeColor == Color.Red) break;
+                            }
+                            else if (pButton.ForeColor == Color.Red)
+                            {
+                                if (ButtonList[i][x].ForeColor == Color.Blue) break;
+                            }
+                        }
+
+                        for (int i = x - 1; i >= 0 && pButton.ForeColor != ButtonList[y][i].ForeColor; i--)
+                        {
+                            ButtonList[y][i].FlatAppearance.BorderColor = Color.Crimson;
+                            if (pButton.ForeColor == Color.Blue)
+                            {
+                                if (ButtonList[y][i].ForeColor == Color.Red) break;
+                            }
+                            else if (pButton.ForeColor == Color.Red)
+                            {
+                                if (ButtonList[y][i].ForeColor == Color.Blue) break;
+                            }
+                        }
+
+                        for (int i = x + 1; i < BOARD_COLUMN_COUNT && pButton.ForeColor != ButtonList[y][i].ForeColor; i++)
+                        {
+                            ButtonList[y][i].FlatAppearance.BorderColor = Color.Crimson;
+                            if (pButton.ForeColor == Color.Blue)
+                            {
+                                if (ButtonList[y][i].ForeColor == Color.Red) break;
+                            }
+                            else if (pButton.ForeColor == Color.Red)
+                            {
+                                if (ButtonList[y][i].ForeColor == Color.Blue) break;
+                            }
+                        }
+                        
+                        ButtonList[y][x].ForeColor = Color.Black;
+
+                        ChessDoing = true;
+                        #endregion
                         break;
 
                     case "kn":
+                        #region Knight
                         if (pButton.BackColor == Color.Blue)
                         {
 
@@ -221,41 +322,248 @@ namespace ChessGame
                         {
 
                         }
+                        #endregion
                         break;
 
                     case "vi":
-                        if (pButton.BackColor == Color.Blue)
-                        {
+                        #region Vishop
+                        int idx = 1;
+                        ButtonList[y][x].Text = "";
 
-                        }
-                        else if (pButton.BackColor == Color.Red)
+                        for (int i = y - 1; i >= 0 && x - idx >= 0 && pButton.ForeColor != ButtonList[i][x - idx].ForeColor; i--, idx++)
                         {
-
+                            ButtonList[i][x - idx].FlatAppearance.BorderColor = Color.Crimson;
+                            if (pButton.ForeColor == Color.Blue)
+                            {
+                                if (ButtonList[i][x - idx].ForeColor == Color.Red) break;
+                            }
+                            else if (pButton.ForeColor == Color.Red)
+                            {
+                                if (ButtonList[i][x - idx].ForeColor == Color.Blue) break;
+                            }
                         }
+
+                        idx = 1;
+                        for (int i = y + 1; i < BOARD_ROW_COUNT && x + idx < BOARD_COLUMN_COUNT && pButton.ForeColor != ButtonList[i][x + idx].ForeColor; i++, idx++)
+                        {
+                            ButtonList[i][x + idx].FlatAppearance.BorderColor = Color.Crimson;
+                            if (pButton.ForeColor == Color.Blue)
+                            {
+                                if (ButtonList[i][x + idx].ForeColor == Color.Red) break;
+                            }
+                            else if (pButton.ForeColor == Color.Red)
+                            {
+                                if (ButtonList[i][x + idx].ForeColor == Color.Blue) break;
+                            }
+                        }
+
+                        idx = 1;
+                        for (int i = x - 1; i >= 0 && y + idx < BOARD_ROW_COUNT && pButton.ForeColor != ButtonList[y + idx][i].ForeColor; i--, idx++)
+                        {
+                            ButtonList[y + idx][i].FlatAppearance.BorderColor = Color.Crimson;
+                            if (pButton.ForeColor == Color.Blue)
+                            {
+                                if (ButtonList[y + idx][i].ForeColor == Color.Red) break;
+                            }
+                            else if (pButton.ForeColor == Color.Red)
+                            {
+                                if (ButtonList[y + idx][i].ForeColor == Color.Blue) break;
+                            }
+                        }
+
+                        idx = 1;
+                        for (int i = x + 1; i < BOARD_COLUMN_COUNT && y - idx >= 0 && pButton.ForeColor != ButtonList[y - idx][i].ForeColor; i++, idx++)
+                        {
+                            ButtonList[y - idx][i].FlatAppearance.BorderColor = Color.Crimson;
+                            if (pButton.ForeColor == Color.Blue)
+                            {
+                                if (ButtonList[y - idx][i].ForeColor == Color.Red) break;
+                            }
+                            else if (pButton.ForeColor == Color.Red)
+                            {
+                                if (ButtonList[y - idx][i].ForeColor == Color.Blue) break;
+                            }
+                        }
+
+                        ButtonList[y][x].ForeColor = Color.Black;
+
+                        ChessDoing = true;
+                        #endregion
                         break;
-
+                        
                     case "Qu":
-                        if (pButton.BackColor == Color.Blue)
-                        {
+                        #region Queen
+                        ButtonList[y][x].Text = "";
 
-                        }
-                        else if (pButton.BackColor == Color.Red)
+                        for (int i = y - 1; i >= 0 && pButton.ForeColor != ButtonList[i][x].ForeColor; i--)
                         {
-
+                            ButtonList[i][x].FlatAppearance.BorderColor = Color.Crimson;
+                            if (pButton.ForeColor == Color.Blue)
+                            {
+                                if (ButtonList[i][x].ForeColor == Color.Red) break;
+                            }
+                            else if (pButton.ForeColor == Color.Red)
+                            {
+                                if (ButtonList[i][x].ForeColor == Color.Blue) break;
+                            }
                         }
+
+                        for (int i = y + 1; i < BOARD_ROW_COUNT && pButton.ForeColor != ButtonList[i][x].ForeColor; i++)
+                        {
+                            ButtonList[i][x].FlatAppearance.BorderColor = Color.Crimson;
+                            if (pButton.ForeColor == Color.Blue)
+                            {
+                                if (ButtonList[i][x].ForeColor == Color.Red) break;
+                            }
+                            else if (pButton.ForeColor == Color.Red)
+                            {
+                                if (ButtonList[i][x].ForeColor == Color.Blue) break;
+                            }
+                        }
+
+                        for (int i = x - 1; i >= 0 && pButton.ForeColor != ButtonList[y][i].ForeColor; i--)
+                        {
+                            ButtonList[y][i].FlatAppearance.BorderColor = Color.Crimson;
+                            if (pButton.ForeColor == Color.Blue)
+                            {
+                                if (ButtonList[y][i].ForeColor == Color.Red) break;
+                            }
+                            else if (pButton.ForeColor == Color.Red)
+                            {
+                                if (ButtonList[y][i].ForeColor == Color.Blue) break;
+                            }
+                        }
+
+                        for (int i = x + 1; i < BOARD_COLUMN_COUNT && pButton.ForeColor != ButtonList[y][i].ForeColor; i++)
+                        {
+                            ButtonList[y][i].FlatAppearance.BorderColor = Color.Crimson;
+                            if (pButton.ForeColor == Color.Blue)
+                            {
+                                if (ButtonList[y][i].ForeColor == Color.Red) break;
+                            }
+                            else if (pButton.ForeColor == Color.Red)
+                            {
+                                if (ButtonList[y][i].ForeColor == Color.Blue) break;
+                            }
+                        }
+
+                        int idxQ = 1;
+
+                        for (int i = y - 1; i >= 0 && x - idxQ >= 0 && pButton.ForeColor != ButtonList[i][x - idxQ].ForeColor; i--, idxQ++)
+                        {
+                            ButtonList[i][x - idxQ].FlatAppearance.BorderColor = Color.Crimson;
+                            if (pButton.ForeColor == Color.Blue)
+                            {
+                                if (ButtonList[i][x - idxQ].ForeColor == Color.Red) break;
+                            }
+                            else if (pButton.ForeColor == Color.Red)
+                            {
+                                if (ButtonList[i][x - idxQ].ForeColor == Color.Blue) break;
+                            }
+                        }
+
+                        idxQ = 1;
+                        for (int i = y + 1; i < BOARD_ROW_COUNT && x + idxQ < BOARD_COLUMN_COUNT && pButton.ForeColor != ButtonList[i][x + idxQ].ForeColor; i++, idxQ++)
+                        {
+                            ButtonList[i][x + idxQ].FlatAppearance.BorderColor = Color.Crimson;
+                            if (pButton.ForeColor == Color.Blue)
+                            {
+                                if (ButtonList[i][x + idxQ].ForeColor == Color.Red) break;
+                            }
+                            else if (pButton.ForeColor == Color.Red)
+                            {
+                                if (ButtonList[i][x + idxQ].ForeColor == Color.Blue) break;
+                            }
+                        }
+
+                        idxQ = 1;
+                        for (int i = x - 1; i >= 0 && y + idxQ < BOARD_ROW_COUNT && pButton.ForeColor != ButtonList[y + idxQ][i].ForeColor; i--, idxQ++)
+                        {
+                            ButtonList[y + idxQ][i].FlatAppearance.BorderColor = Color.Crimson;
+                            if (pButton.ForeColor == Color.Blue)
+                            {
+                                if (ButtonList[y + idxQ][i].ForeColor == Color.Red) break;
+                            }
+                            else if (pButton.ForeColor == Color.Red)
+                            {
+                                if (ButtonList[y + idxQ][i].ForeColor == Color.Blue) break;
+                            }
+                        }
+
+                        idxQ = 1;
+                        for (int i = x + 1; i < BOARD_COLUMN_COUNT && y - idxQ >= 0 && pButton.ForeColor != ButtonList[y - idxQ][i].ForeColor; i++, idxQ++)
+                        {
+                            ButtonList[y - idxQ][i].FlatAppearance.BorderColor = Color.Crimson;
+                            if (pButton.ForeColor == Color.Blue)
+                            {
+                                if (ButtonList[y - idxQ][i].ForeColor == Color.Red) break;
+                            }
+                            else if (pButton.ForeColor == Color.Red)
+                            {
+                                if (ButtonList[y - idxQ][i].ForeColor == Color.Blue) break;
+                            }
+                        }
+
+                        ButtonList[y][x].ForeColor = Color.Black;
+
+                        ChessDoing = true;
+                        #endregion
                         break;
 
                     case "Ki":
-                        if (pButton.BackColor == Color.Blue)
-                        {
+                        #region King
+                        ButtonList[y][x].Text = "";
 
-                        }
-                        else if (pButton.BackColor == Color.Red)
+                        if (y - 1 >= 0 && pButton.ForeColor != ButtonList[y - 1][x].ForeColor)
                         {
-
+                            ButtonList[y - 1][x].FlatAppearance.BorderColor = Color.Crimson;
                         }
+
+                        if (y + 1 < BOARD_ROW_COUNT && pButton.ForeColor != ButtonList[y + 1][x].ForeColor)
+                        {
+                            ButtonList[y + 1][x].FlatAppearance.BorderColor = Color.Crimson;
+                        }
+
+                        if (x - 1 >= 0 && pButton.ForeColor != ButtonList[y][x - 1].ForeColor)
+                        {
+                            ButtonList[y][x - 1].FlatAppearance.BorderColor = Color.Crimson;
+                        }
+
+                        if (x + 1 < BOARD_COLUMN_COUNT && pButton.ForeColor != ButtonList[y][x + 1].ForeColor)
+                        {
+                            ButtonList[y][x + 1].FlatAppearance.BorderColor = Color.Crimson;
+                        }
+
+
+                        if (y - 1 >= 0 && x - 1 >= 0 && pButton.ForeColor != ButtonList[y - 1][x - 1].ForeColor)
+                        {
+                            ButtonList[y - 1][x - 1].FlatAppearance.BorderColor = Color.Crimson;
+                        }
+
+                        if (y + 1 < BOARD_ROW_COUNT && x + 1 < BOARD_COLUMN_COUNT && pButton.ForeColor != ButtonList[y + 1][x + 1].ForeColor)
+                        {
+                            ButtonList[y + 1][x + 1].FlatAppearance.BorderColor = Color.Crimson;
+                        }
+
+                        if (x - 1 >= 0 && y + 1 < BOARD_ROW_COUNT && pButton.ForeColor != ButtonList[y + 1][x - 1].ForeColor)
+                        {
+                            ButtonList[y + 1][x - 1].FlatAppearance.BorderColor = Color.Crimson;
+                        }
+
+                        if (x + 1 < BOARD_COLUMN_COUNT && y - 1 >= 0 && pButton.ForeColor != ButtonList[y - 1][x + 1].ForeColor)
+                        {
+                            ButtonList[y - 1][x + 1].FlatAppearance.BorderColor = Color.Crimson;
+                        }
+
+                        ButtonList[y][x].ForeColor = Color.Black;
+                        ChessDoing = true;
+                        #endregion
                         break;
                 }
+
+                #endregion
+
+                ButtonList[y][x].FlatAppearance.BorderColor = Color.Chartreuse;
             }
         }
 
@@ -299,9 +607,19 @@ namespace ChessGame
             {
                 for (int j = 0; j < 8; j++)
                 {
-                    if (i == 0) BlueTeamList.Add(new ChessObject(ChessObject.PAWN, Color.Blue));
+                    if (i == 0)
+                    {
+                        ChessObject a = new ChessObject(ChessObject.PAWN, Color.Blue);
+                        a.SetLocation(j, 1);
+                        BlueTeamList.Add(a);
+                    }
 
-                    if (i == 1) RedTeamList.Add(new ChessObject(ChessObject.PAWN, Color.Red));
+                    if (i == 1)
+                    {
+                        ChessObject a = new ChessObject(ChessObject.PAWN, Color.Red);
+                        a.SetLocation(j, 6);
+                        RedTeamList.Add(a);
+                    }
                 }
             }
 
@@ -311,14 +629,39 @@ namespace ChessGame
 
         private void ListSet(ref List<ChessObject> pList, Color pColor)
         {
-            pList.Add(new ChessObject(ChessObject.CASTLE, pColor));
-            pList.Add(new ChessObject(ChessObject.KNIGHT, pColor));
-            pList.Add(new ChessObject(ChessObject.VISHOP, pColor));
-            pList.Add(new ChessObject(ChessObject.KNIGHT, pColor));
-            pList.Add(new ChessObject(ChessObject.QUEEN,  pColor));
-            pList.Add(new ChessObject(ChessObject.VISHOP, pColor));
-            pList.Add(new ChessObject(ChessObject.KNIGHT, pColor));
-            pList.Add(new ChessObject(ChessObject.CASTLE, pColor));
+            int RowIDX = pColor == Color.Red ? 7 : 0;
+
+            ChessObject a = new ChessObject(ChessObject.CASTLE, pColor);
+            a.SetLocation(0, RowIDX);
+            pList.Add(a);
+
+            a = new ChessObject(ChessObject.KNIGHT, pColor);
+            a.SetLocation(0, RowIDX);
+            pList.Add(a);
+
+            a = new ChessObject(ChessObject.VISHOP, pColor);
+            a.SetLocation(0, RowIDX);
+            pList.Add(a);
+
+            a = new ChessObject(ChessObject.KING, pColor);
+            a.SetLocation(0, RowIDX);
+            pList.Add(a);
+
+            a = new ChessObject(ChessObject.QUEEN, pColor);
+            a.SetLocation(0, RowIDX);
+            pList.Add(a);
+
+            a = new ChessObject(ChessObject.VISHOP, pColor);
+            a.SetLocation(0, RowIDX);
+            pList.Add(a);
+
+            a = new ChessObject(ChessObject.KNIGHT, pColor);
+            a.SetLocation(0, RowIDX);
+            pList.Add(a);
+
+            a = new ChessObject(ChessObject.CASTLE, pColor);
+            a.SetLocation(0, RowIDX);
+            pList.Add(a);
         }
 
         private void SetBoard()
