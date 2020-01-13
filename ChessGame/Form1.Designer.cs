@@ -32,6 +32,8 @@
             this.lblBtnloc = new System.Windows.Forms.Label();
             this.lblBtnText = new System.Windows.Forms.Label();
             this.lblBtnColor = new System.Windows.Forms.Label();
+            this.lblTeamRedMove = new System.Windows.Forms.Label();
+            this.lblTeamBlueMove = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // button1
@@ -70,11 +72,31 @@
             this.lblBtnColor.TabIndex = 3;
             this.lblBtnColor.Text = "CLICK_BTN_COLOR";
             // 
+            // lblTeamRedMove
+            // 
+            this.lblTeamRedMove.AutoSize = true;
+            this.lblTeamRedMove.Location = new System.Drawing.Point(28, 268);
+            this.lblTeamRedMove.Name = "lblTeamRedMove";
+            this.lblTeamRedMove.Size = new System.Drawing.Size(99, 12);
+            this.lblTeamRedMove.TabIndex = 4;
+            this.lblTeamRedMove.Text = "Red Team Move";
+            // 
+            // lblTeamBlueMove
+            // 
+            this.lblTeamBlueMove.AutoSize = true;
+            this.lblTeamBlueMove.Location = new System.Drawing.Point(28, 290);
+            this.lblTeamBlueMove.Name = "lblTeamBlueMove";
+            this.lblTeamBlueMove.Size = new System.Drawing.Size(102, 12);
+            this.lblTeamBlueMove.TabIndex = 5;
+            this.lblTeamBlueMove.Text = "Blue Team Move";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 524);
+            this.Controls.Add(this.lblTeamBlueMove);
+            this.Controls.Add(this.lblTeamRedMove);
             this.Controls.Add(this.lblBtnColor);
             this.Controls.Add(this.lblBtnText);
             this.Controls.Add(this.lblBtnloc);
@@ -92,6 +114,8 @@
         private System.Windows.Forms.Label lblBtnloc;
         private System.Windows.Forms.Label lblBtnText;
         private System.Windows.Forms.Label lblBtnColor;
+        private System.Windows.Forms.Label lblTeamRedMove;
+        private System.Windows.Forms.Label lblTeamBlueMove;
     }
 }
 
