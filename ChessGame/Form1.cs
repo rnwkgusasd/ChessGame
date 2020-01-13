@@ -21,6 +21,9 @@ namespace ChessGame
         public static int BOARD_ROW_COUNT       = 8;
         public static int BOARD_COLUMN_COUNT    = 8;
 
+        public int RedMoveCount = 0;
+        public int BlueMoveCount = 0;
+
         private int ClickX = 0;
         private int ClickY = 0;
 
@@ -180,7 +183,25 @@ namespace ChessGame
                     if (tmp.Text != "") lblBtnText.Text = String.Format($"{tmp.Text}");
                 }
                 
-                MoveableLocation(ClickX, ClickY, ButtonList[ClickY][ClickX]);
+                if (RedMoveCount == BlueMoveCount && ButtonList[ClickY][ClickX].ForeColor == Color.Red)
+                {
+                    MoveableLocation(ClickX, ClickY, ButtonList[ClickY][ClickX]);
+                    return;
+                }
+                
+                if (RedMoveCount > BlueMoveCount && ButtonList[ClickY][ClickX].ForeColor == Color.Blue)
+                {
+                    MoveableLocation(ClickX, ClickY, ButtonList[ClickY][ClickX]);
+                    return;
+                }
+
+                if (ButtonList[ClickY][ClickX].ForeColor == Color.Blue && ButtonList[PrevY][PrevX].ForeColor == Color.Black)
+                    MoveableLocation(ClickX, ClickY, ButtonList[ClickY][ClickX]);
+
+                if (ButtonList[ClickY][ClickX].ForeColor == Color.Red && ButtonList[PrevY][PrevX].ForeColor == Color.Black)
+                    MoveableLocation(ClickX, ClickY, ButtonList[ClickY][ClickX]);
+
+                if (ButtonList[ClickY][ClickX].ForeColor == Color.Black) MoveableLocation(ClickX, ClickY, ButtonList[ClickY][ClickX]);
             }
             else
             {
@@ -202,9 +223,10 @@ namespace ChessGame
 
             if (ChessDoing && pButton.Text == ChessObject.KING)
             {
-                MessageBox.Show(String.Format(@"{0} Team Win", pButton.ForeColor == Color.Red ? "Blue" : "Red"));
+                DialogResult result = MsgForm.ShowDialog("Winner is", pButton.ForeColor == Color.Red ? "Blue" : "Red");
 
-                this.Dispose();
+                if(result == DialogResult.OK)
+                    this.Dispose();
             }
 
             if (!ChessDoing)
@@ -256,14 +278,11 @@ namespace ChessGame
                     }
                 }
                 
-                int redMove = 0;
-                int blueMove = 0;
-                
-                redMove += RedTeamList.Sum(moveCount => moveCount.GetMoveCount());
-                blueMove += BlueTeamList.Sum(moveCount => moveCount.GetMoveCount());
+                RedMoveCount = RedTeamList.Sum(moveCount => moveCount.GetMoveCount());
+                BlueMoveCount = BlueTeamList.Sum(moveCount => moveCount.GetMoveCount());
 
-                lblTeamRedMove.Text = String.Format($"{redMove}");
-                lblTeamBlueMove.Text = String.Format($"{blueMove}");
+                lblTeamRedMove.Text = String.Format($"Red Team Move : {RedMoveCount}");
+                lblTeamBlueMove.Text = String.Format($"Blue Team Move : {BlueMoveCount}");
 
                 return;
             }
@@ -413,7 +432,7 @@ namespace ChessGame
                             if (y - 1 >= 0 && x + 2 < BOARD_COLUMN_COUNT && ButtonList[y - 1][x + 2].ForeColor != pButton.ForeColor)
                                 ButtonList[y - 1][x + 2].FlatAppearance.BorderColor = Color.Crimson;
 
-                            if (y + 1 <= BOARD_ROW_COUNT && x + 2 < BOARD_COLUMN_COUNT && ButtonList[y + 1][x + 2].ForeColor != pButton.ForeColor)
+                            if (y + 1 < BOARD_ROW_COUNT && x + 2 < BOARD_COLUMN_COUNT && ButtonList[y + 1][x + 2].ForeColor != pButton.ForeColor)
                                 ButtonList[y + 1][x + 2].FlatAppearance.BorderColor = Color.Crimson;
                         }
 
