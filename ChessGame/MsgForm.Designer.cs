@@ -30,6 +30,7 @@
         {
             this.ok_btn = new System.Windows.Forms.Button();
             this.cancel_btn = new System.Windows.Forms.Button();
+            this.lblText = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // ok_btn
@@ -54,11 +55,22 @@
             this.cancel_btn.UseVisualStyleBackColor = true;
             this.cancel_btn.Click += new System.EventHandler(this.cancel_btn_Click);
             // 
+            // lblText
+            // 
+            this.lblText.AutoSize = true;
+            this.lblText.Font = new System.Drawing.Font("굴림", 15F);
+            this.lblText.Location = new System.Drawing.Point(55, 96);
+            this.lblText.Name = "lblText";
+            this.lblText.Size = new System.Drawing.Size(57, 20);
+            this.lblText.TabIndex = 2;
+            this.lblText.Text = "label1";
+            // 
             // MsgForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(663, 226);
+            this.Controls.Add(this.lblText);
             this.Controls.Add(this.cancel_btn);
             this.Controls.Add(this.ok_btn);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
@@ -68,6 +80,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "MsgForm";
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -75,5 +88,6 @@
 
         private System.Windows.Forms.Button ok_btn;
         private System.Windows.Forms.Button cancel_btn;
+        private System.Windows.Forms.Label lblText;
     }
 }

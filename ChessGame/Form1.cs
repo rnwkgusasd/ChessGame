@@ -31,6 +31,8 @@ namespace ChessGame
         private int PrevY = 0;
 
         private bool ChessDoing = false;
+
+        private Color PrevColor;
         #endregion
 
         public class ChessObject
@@ -177,31 +179,25 @@ namespace ChessGame
 
                 lblBtnloc.Text = String.Format($"X : {ch}, Y : {8 - ClickY}");
 
+                bool MoveCheck = false;
+
                 if(!ChessDoing)
                 {
                     if (tmp.ForeColor.Name != "Black") lblBtnColor.Text = String.Format($"{tmp.ForeColor.Name}");
                     if (tmp.Text != "") lblBtnText.Text = String.Format($"{tmp.Text}");
                 }
-                
-                if (RedMoveCount == BlueMoveCount && ButtonList[ClickY][ClickX].ForeColor == Color.Red)
-                {
-                    MoveableLocation(ClickX, ClickY, ButtonList[ClickY][ClickX]);
-                    return;
-                }
-                
-                if (RedMoveCount > BlueMoveCount && ButtonList[ClickY][ClickX].ForeColor == Color.Blue)
-                {
-                    MoveableLocation(ClickX, ClickY, ButtonList[ClickY][ClickX]);
-                    return;
-                }
 
-                if (ButtonList[ClickY][ClickX].ForeColor == Color.Blue && ButtonList[PrevY][PrevX].ForeColor == Color.Black)
-                    MoveableLocation(ClickX, ClickY, ButtonList[ClickY][ClickX]);
+                if (RedMoveCount == BlueMoveCount && ButtonList[ClickY][ClickX].ForeColor == Color.Red)     MoveCheck = true;
 
-                if (ButtonList[ClickY][ClickX].ForeColor == Color.Red && ButtonList[PrevY][PrevX].ForeColor == Color.Black)
-                    MoveableLocation(ClickX, ClickY, ButtonList[ClickY][ClickX]);
+                if (RedMoveCount > BlueMoveCount && ButtonList[ClickY][ClickX].ForeColor == Color.Blue)     MoveCheck = true;
 
-                if (ButtonList[ClickY][ClickX].ForeColor == Color.Black) MoveableLocation(ClickX, ClickY, ButtonList[ClickY][ClickX]);
+                if (ButtonList[ClickY][ClickX].ForeColor == Color.Blue && PrevColor == Color.Red)           MoveCheck = true;
+
+                if (ButtonList[ClickY][ClickX].ForeColor == Color.Red && PrevColor == Color.Blue)           MoveCheck = true;
+
+                if (ButtonList[ClickY][ClickX].ForeColor == Color.Black)                                    MoveCheck = true;
+
+                if (MoveCheck) MoveableLocation(ClickX, ClickY, ButtonList[ClickY][ClickX]);
             }
             else
             {
@@ -218,15 +214,15 @@ namespace ChessGame
         private void MoveableLocation(int x, int y, Button pButton)
         {
             Color pBorderColor = pButton.FlatAppearance.BorderColor;
+            PrevColor = pButton.ForeColor;
 
             if (pButton.Text == "" && pBorderColor == Color.Gray) return;
 
             if (ChessDoing && pButton.Text == ChessObject.KING)
             {
-                DialogResult result = MsgForm.ShowDialog("Winner is", pButton.ForeColor == Color.Red ? "Blue" : "Red");
-
-                if(result == DialogResult.OK)
-                    this.Dispose();
+               MsgForm.ShowDialog("Winner is", pButton.ForeColor == Color.Red ? "Blue" : "Red");
+                
+                Dispose();
             }
 
             if (!ChessDoing)
@@ -313,10 +309,13 @@ namespace ChessGame
                             {
                                 ButtonList[y + i][x].FlatAppearance.BorderColor = Color.Crimson;
                             }
+
+                            if (ButtonList[y + 1][x + 1].ForeColor == Color.Red) ButtonList[y + 1][x + 1].FlatAppearance.BorderColor = Color.Crimson;
+                            if (ButtonList[y + 1][x - 1].ForeColor == Color.Red) ButtonList[y + 1][x + 1].FlatAppearance.BorderColor = Color.Crimson;
                         }
                         else
                         {
-                            for (int i = 0; i < BlueTeamList.Count; i++)
+                            for (int i = 0; i < RedTeamList.Count; i++)
                             {
                                 if (RedTeamList[i].GetLocation() == new Point(x, y))
                                     pMoveCount = RedTeamList[i].GetMoveCount();
@@ -328,6 +327,9 @@ namespace ChessGame
                             {
                                 ButtonList[y - i][x].FlatAppearance.BorderColor = Color.Crimson;
                             }
+
+                            if (ButtonList[y - 1][x + 1].ForeColor == Color.Blue) ButtonList[y - 1][x + 1].FlatAppearance.BorderColor = Color.Crimson;
+                            if (ButtonList[y - 1][x - 1].ForeColor == Color.Blue) ButtonList[y - 1][x + 1].FlatAppearance.BorderColor = Color.Crimson;
                         }
 
                         ButtonList[y][x].ForeColor = Color.Black;

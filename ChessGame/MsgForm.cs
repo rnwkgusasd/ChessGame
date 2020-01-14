@@ -12,20 +12,18 @@ namespace ChessGame
 {
     public partial class MsgForm : Form
     {
-        private string MSG = "";
-        private string Winner = "";
-
         public MsgForm(string pMsg)
         {
-            MSG = pMsg;
             InitializeComponent();
+
+            lblText.Text = pMsg;
         }
 
         public MsgForm(string pMsg, string pWinner)
         {
-            MSG = pMsg;
-            Winner = pWinner;
             InitializeComponent();
+
+            lblText.Text = String.Format($"{pMsg} {pWinner}");
         }
 
         public static DialogResult ShowDialog(string pMsg)
