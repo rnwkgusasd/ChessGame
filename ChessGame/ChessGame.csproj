@@ -52,6 +52,12 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="SelectObject.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SelectObject.Designer.cs">
+      <DependentUpon>SelectObject.cs</DependentUpon>
+    </Compile>
     <Compile Include="MsgForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -62,6 +68,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SelectObject.resx">
+      <DependentUpon>SelectObject.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MsgForm.resx">
       <DependentUpon>MsgForm.cs</DependentUpon>
@@ -75,6 +84,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <None Include="Chess7-DaE1.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

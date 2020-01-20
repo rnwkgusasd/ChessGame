@@ -10,34 +10,23 @@ using System.Windows.Forms;
 
 namespace ChessGame
 {
-    public partial class MsgForm : Form
+    public partial class SelectObject : Form
     {
-        public MsgForm(string pMsg)
+        private string[] ObjectArray;
+
+        public SelectObject()
         {
             InitializeComponent();
-
-            lblText.Text = pMsg;
         }
 
-        public MsgForm(string pMsg, string pWinner)
+        public void SetArray(string[] pArray)
         {
-            InitializeComponent();
-
-            lblText.Text = String.Format($"{pMsg} {pWinner}");
+            ObjectArray = pArray;
         }
 
-        public static DialogResult ShowDialog(string pMsg)
+        public string GetString()
         {
-            MsgForm frm = new MsgForm(pMsg);
-
-            return frm.ShowDialog();
-        }
-
-        public static DialogResult ShowDialog(string pMsg, string pWinner)
-        {
-            MsgForm frm = new MsgForm(pMsg, pWinner);
-
-            return frm.ShowDialog();
+            return ObjectArrayComboBox.SelectedItem.ToString();
         }
 
         private void ok_btn_Click(object sender, EventArgs e)
@@ -50,6 +39,11 @@ namespace ChessGame
         {
             this.DialogResult = DialogResult.Cancel;
             this.Dispose();
+        }
+
+        private void SelectObject_Load(object sender, EventArgs e)
+        {
+            ObjectArrayComboBox.Items.AddRange(ObjectArray);
         }
     }
 }

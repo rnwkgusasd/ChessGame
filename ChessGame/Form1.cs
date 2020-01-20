@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Text;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,31 +19,48 @@ namespace ChessGame
         public List<ChessObject> BlueTeamList   = new List<ChessObject>(); // Blue team's chess objects.
         public List<ChessObject> RedTeamList    = new List<ChessObject>(); // Red team's chess objects.
 
-        public static int BOARD_ROW_COUNT       = 8;
-        public static int BOARD_COLUMN_COUNT    = 8;
+        // Board Size = 8 x 8
+        public static int BOARD_ROW_COUNT       = 8; // Board Rows Count = 8
+        public static int BOARD_COLUMN_COUNT    = 8; // Board Columns Count = 8
 
-        public int RedMoveCount = 0;
-        public int BlueMoveCount = 0;
+        public int RedMoveCount     = 0; // Red Team Move Count
+        public int BlueMoveCount    = 0; // Blue Team Move Count
 
-        private int ClickX = 0;
-        private int ClickY = 0;
+        private int ClickX = 0; // X Position of Click Button
+        private int ClickY = 0; // Y Position of Click Button
 
-        private int PrevX = 0;
-        private int PrevY = 0;
+        private int PrevX = 0; // X Position of Previous Click Button
+        private int PrevY = 0; // Y Position of Previous Click Button
 
-        private bool ChessDoing = false;
+        private bool ChessDoing = false; // Doing Chess Check
 
-        private Color PrevColor;
+        private Color PrevColor; // Color of Previous Click Button
+        #endregion
+
+        #region Static Variables
+        public const string PAWN = "p"; // Pawn Shape
+        public const string CASTLE = "r"; // Castle Shape
+        public const string KNIGHT = "n"; // Knight Shape
+        public const string VISHOP = "b"; // Vishop Shape
+        public const string QUEEN = "q"; // Queen Shape
+        public const string KING = "k"; // King Shape
+
+        public const string PAWNF = "o"; // Pawn Shape - Full
+        public const string CASTLEF = "t"; // Castle Shape - Full
+        public const string KNIGHTF = "m"; // Knight Shape - Full
+        public const string VISHOPF = "v"; // Vishop Shape - Full
+        public const string QUEENF = "w"; // Queen Shape - Full
+        public const string KINGF = "l"; // King Shape - Full
         #endregion
 
         public class ChessObject
         {
-            private readonly string  Name        = "";
-            private int              MoveCount   = 0;
-            private int              X           = 0;
-            private int              Y           = 0;
+            private string           Name        = "";  // Object Name
+            private int              MoveCount   = 0;   // Object Move Count
+            private int              X           = 0;   // Object X Position
+            private int              Y           = 0;   // Object Y Position
 
-            private readonly Color TeamColor;
+            private readonly Color TeamColor;           // Object Team Color
 
             /// <summary>
             /// Make chess object with team color.
@@ -62,6 +80,14 @@ namespace ChessGame
             public string GetName()
             {
                 return Name;
+            }
+
+            /// <summary>
+            /// Set object name.
+            /// </summary>
+            public void SetName(string pName)
+            {
+                Name = pName;
             }
 
             /// <summary>
@@ -113,15 +139,6 @@ namespace ChessGame
                 SetLocation(x, y);
                 MoveCount++;
             }
-
-            #region Static Variables
-            public static string PAWN   = "pa";
-            public static string CASTLE = "ca";
-            public static string KNIGHT = "kn";
-            public static string VISHOP = "vi";
-            public static string QUEEN  = "Qu";
-            public static string KING   = "Ki";
-            #endregion
         }
 
         public Form1()
@@ -139,8 +156,10 @@ namespace ChessGame
         private void InitBoard()
         {
             ButtonList.Clear();
-            
-            for(int i = 0; i < BOARD_ROW_COUNT; i++)
+            PrivateFontCollection CustomFont = new PrivateFontCollection();
+            CustomFont.AddFontFile("Chess7-DaE1.ttf");
+
+            for (int i = 0; i < BOARD_ROW_COUNT; i++)
             {
                 Button[] tButtons = new Button[BOARD_COLUMN_COUNT];
 
@@ -151,7 +170,8 @@ namespace ChessGame
                         FlatStyle = FlatStyle.Flat,
                         Size = new Size(50, 50),
                         BackColor = (i + j) % 2 == 0 ? Color.White : Color.Black,
-                        ForeColor = Color.Black
+                        ForeColor = Color.Black,
+                        Font = new Font(CustomFont.Families[0], 20f)
                     };
                     tButtons[j].FlatAppearance.BorderColor = Color.Gray;  // Button design
                     tButtons[j].FlatAppearance.BorderSize = 2;
@@ -187,16 +207,24 @@ namespace ChessGame
                     if (tmp.Text != "") lblBtnText.Text = String.Format($"{tmp.Text}");
                 }
 
+                // Red Blue Team Turn Check
                 if (RedMoveCount == BlueMoveCount && ButtonList[ClickY][ClickX].ForeColor == Color.Red)     MoveCheck = true;
-
                 if (RedMoveCount > BlueMoveCount && ButtonList[ClickY][ClickX].ForeColor == Color.Blue)     MoveCheck = true;
 
-                if (ButtonList[ClickY][ClickX].ForeColor == Color.Blue && PrevColor == Color.Red)           MoveCheck = true;
-
-                if (ButtonList[ClickY][ClickX].ForeColor == Color.Red && PrevColor == Color.Blue)           MoveCheck = true;
-
+                // Other Conditions
+                if (ButtonList[ClickY][ClickX].ForeColor == Color.Blue && PrevColor == Color.Red)
+                {
+                    MoveCheck = true;
+                    PrevColor = Color.Black;
+                }
+                if (ButtonList[ClickY][ClickX].ForeColor == Color.Red && PrevColor == Color.Blue)
+                {
+                    MoveCheck = true;
+                    PrevColor = Color.Black;
+                }
                 if (ButtonList[ClickY][ClickX].ForeColor == Color.Black)                                    MoveCheck = true;
 
+                // Do
                 if (MoveCheck) MoveableLocation(ClickX, ClickY, ButtonList[ClickY][ClickX]);
             }
             else
@@ -214,15 +242,16 @@ namespace ChessGame
         private void MoveableLocation(int x, int y, Button pButton)
         {
             Color pBorderColor = pButton.FlatAppearance.BorderColor;
-            PrevColor = pButton.ForeColor;
+            if(pButton.FlatAppearance.BorderColor != Color.Crimson) PrevColor = pButton.ForeColor;
 
             if (pButton.Text == "" && pBorderColor == Color.Gray) return;
 
-            if (ChessDoing && pButton.Text == ChessObject.KING)
+            if (ChessDoing && pButton.Text == KING)
             {
-               MsgForm.ShowDialog("Winner is", pButton.ForeColor == Color.Red ? "Blue" : "Red");
-                
-                Dispose();
+                DialogResult result = MsgForm.ShowDialog("Winner is", pButton.ForeColor == Color.Red ? "Blue" : "Red");
+
+                if(result == DialogResult.OK)
+                    Dispose();
             }
 
             if (!ChessDoing)
@@ -258,6 +287,22 @@ namespace ChessGame
                         if (BlueTeamList[i].GetLocation() == new Point(PrevX, PrevY))
                         {
                             BlueTeamList[i].MoveTo(x, y);
+
+                            if (BlueTeamList[i].GetLocation().Y == BOARD_ROW_COUNT - 1 && BlueTeamList[i].GetName() == "pa")
+                            {
+                                SelectObject frm = new SelectObject();
+
+                                frm.SetArray(new string[] { KNIGHT, VISHOP, CASTLE, QUEEN });
+
+                                DialogResult result = frm.ShowDialog();
+
+                                if(result == DialogResult.OK)
+                                {
+                                    BlueTeamList[i].SetName(frm.GetString());
+                                    ButtonList[y][x].Text = frm.GetString();
+                                }
+                            }
+
                             break;
                         }
                     }
@@ -269,11 +314,27 @@ namespace ChessGame
                         if (RedTeamList[i].GetLocation() == new Point(PrevX, PrevY))
                         {
                             RedTeamList[i].MoveTo(x, y);
+
+                            if (RedTeamList[i].GetLocation().Y == 0 && RedTeamList[i].GetName() == "pa")
+                            {
+                                SelectObject frm = new SelectObject();
+
+                                frm.SetArray(new string[] { KNIGHT, VISHOP, CASTLE, QUEEN });
+
+                                DialogResult result = frm.ShowDialog();
+
+                                if (result == DialogResult.OK)
+                                {
+                                    RedTeamList[i].SetName(frm.GetString());
+                                    ButtonList[y][x].Text = frm.GetString();
+                                }
+                            }
+
                             break;
                         }
                     }
                 }
-                
+
                 RedMoveCount = RedTeamList.Sum(moveCount => moveCount.GetMoveCount());
                 BlueMoveCount = BlueTeamList.Sum(moveCount => moveCount.GetMoveCount());
 
@@ -283,13 +344,14 @@ namespace ChessGame
                 return;
             }
 
+            // Show Chess Object Moveable Location
             if(!ChessDoing)
             {
                 #region Chess Object Move
 
                 switch (pButton.Text)
                 {
-                    case "pa":
+                    case PAWN:
                         #region Pawn
                         int CanMove = 1;
                         int pMoveCount = 0;
@@ -310,8 +372,8 @@ namespace ChessGame
                                 ButtonList[y + i][x].FlatAppearance.BorderColor = Color.Crimson;
                             }
 
-                            if (ButtonList[y + 1][x + 1].ForeColor == Color.Red) ButtonList[y + 1][x + 1].FlatAppearance.BorderColor = Color.Crimson;
-                            if (ButtonList[y + 1][x - 1].ForeColor == Color.Red) ButtonList[y + 1][x + 1].FlatAppearance.BorderColor = Color.Crimson;
+                            if (y + 1 < BOARD_ROW_COUNT && x + 1 < BOARD_COLUMN_COUNT && ButtonList[y + 1][x + 1].ForeColor == Color.Red)   ButtonList[y + 1][x + 1].FlatAppearance.BorderColor = Color.Crimson;
+                            if (y + 1 < BOARD_ROW_COUNT && x - 1 > 0 && ButtonList[y + 1][x - 1].ForeColor == Color.Red)                    ButtonList[y + 1][x - 1].FlatAppearance.BorderColor = Color.Crimson;
                         }
                         else
                         {
@@ -328,8 +390,8 @@ namespace ChessGame
                                 ButtonList[y - i][x].FlatAppearance.BorderColor = Color.Crimson;
                             }
 
-                            if (ButtonList[y - 1][x + 1].ForeColor == Color.Blue) ButtonList[y - 1][x + 1].FlatAppearance.BorderColor = Color.Crimson;
-                            if (ButtonList[y - 1][x - 1].ForeColor == Color.Blue) ButtonList[y - 1][x + 1].FlatAppearance.BorderColor = Color.Crimson;
+                            if (y - 1 > 0 && x + 1 < BOARD_COLUMN_COUNT && ButtonList[y - 1][x + 1].ForeColor == Color.Blue)    ButtonList[y - 1][x + 1].FlatAppearance.BorderColor = Color.Crimson;
+                            if (y - 1 > 0 && x - 1 > 0 && ButtonList[y - 1][x - 1].ForeColor == Color.Blue)                     ButtonList[y - 1][x - 1].FlatAppearance.BorderColor = Color.Crimson;
                         }
 
                         ButtonList[y][x].ForeColor = Color.Black;
@@ -337,7 +399,7 @@ namespace ChessGame
                         #endregion
                         break;
 
-                    case "ca":
+                    case CASTLE:
                         #region Castle
                         ButtonList[y][x].Text = "";
 
@@ -398,7 +460,7 @@ namespace ChessGame
                         #endregion
                         break;
 
-                    case "kn":
+                    case KNIGHT:
                         #region Knight
                         ButtonList[y][x].Text = "";
 
@@ -443,7 +505,7 @@ namespace ChessGame
                         #endregion
                         break;
 
-                    case "vi":
+                    case VISHOP:
                         #region Vishop
                         int idx = 1;
                         ButtonList[y][x].Text = "";
@@ -508,7 +570,7 @@ namespace ChessGame
                         #endregion
                         break;
                         
-                    case "Qu":
+                    case QUEEN:
                         #region Queen
                         ButtonList[y][x].Text = "";
 
@@ -626,7 +688,7 @@ namespace ChessGame
                         #endregion
                         break;
 
-                    case "Ki":
+                    case KING:
                         #region King
                         ButtonList[y][x].Text = "";
 
@@ -684,56 +746,62 @@ namespace ChessGame
             }
         }
 
+        /// <summary>
+        /// Add controls - Show chess board
+        /// </summary>
         private void ShowBoard()
         {
             for(int i = 0; i < BOARD_ROW_COUNT; i++)
             {
+                // Columns number
                 Label Alphabet = new Label
                 {
                     Text = Convert.ToChar('A' + i).ToString(),
                     Size = new Size(20, 20),
                     Location = new Point(190 + (i * 55), 18)
                 };
+                
+                // Rows number
+                Label Number = new Label
+                {
+                    Text = (8 - i).ToString(),
+                    Size = new Size(20, 20),
+                    Location = new Point(150, 60 + (i * 55))
+                };
 
                 Controls.Add(Alphabet);
-
+                Controls.Add(Number);
+                
                 for (int j = 0; j < BOARD_COLUMN_COUNT; j++)
                 {
                     ButtonList[i][j].Location = ButtonList[i][j].PointToClient(new Point(180 + (j * 55), 70 + (i * 55)));
-
-                    if (j == 0)
-                    {
-                        Label Number = new Label
-                        {
-                            Text = (8 - i).ToString(),
-                            Size = new Size(20, 20),
-                            Location = new Point(150, 60 + (i * 55))
-                        };
-
-                        Controls.Add(Number);
-                    }
+                    
                     Controls.Add(ButtonList[i][j]);
                 }
             }
             SetBoard();
         }
 
+        /// <summary>
+        /// Make chess objects
+        /// </summary>
         private void SetChess()
         {
             for (int i = 0; i < 2; i++)
             {
+                // Make Pawn
                 for (int j = 0; j < 8; j++)
                 {
                     if (i == 0)
                     {
-                        ChessObject a = new ChessObject(ChessObject.PAWN, Color.Blue);
+                        ChessObject a = new ChessObject(PAWN, Color.Blue);
                         a.SetLocation(j, 1);
                         BlueTeamList.Add(a);
                     }
 
                     if (i == 1)
                     {
-                        ChessObject a = new ChessObject(ChessObject.PAWN, Color.Red);
+                        ChessObject a = new ChessObject(PAWN, Color.Red);
                         a.SetLocation(j, 6);
                         RedTeamList.Add(a);
                     }
@@ -744,43 +812,51 @@ namespace ChessGame
             ListSet(ref RedTeamList, Color.Red);
         }
 
+        /// <summary>
+        /// Make chess objects without pawn
+        /// </summary>
+        /// <param name="pList"></param>
+        /// <param name="pColor"></param>
         private void ListSet(ref List<ChessObject> pList, Color pColor)
         {
             int RowIDX = pColor == Color.Red ? 7 : 0;
 
-            ChessObject a = new ChessObject(ChessObject.CASTLE, pColor);
+            ChessObject a = new ChessObject(CASTLE, pColor);
             a.SetLocation(0, RowIDX);
             pList.Add(a);
 
-            a = new ChessObject(ChessObject.KNIGHT, pColor);
+            a = new ChessObject(KNIGHT, pColor);
             a.SetLocation(1, RowIDX);
             pList.Add(a);
 
-            a = new ChessObject(ChessObject.VISHOP, pColor);
+            a = new ChessObject(VISHOP, pColor);
             a.SetLocation(2, RowIDX);
             pList.Add(a);
 
-            a = new ChessObject(ChessObject.KING, pColor);
+            a = new ChessObject(KING, pColor);
             a.SetLocation(3, RowIDX);
             pList.Add(a);
 
-            a = new ChessObject(ChessObject.QUEEN, pColor);
+            a = new ChessObject(QUEEN, pColor);
             a.SetLocation(4, RowIDX);
             pList.Add(a);
 
-            a = new ChessObject(ChessObject.VISHOP, pColor);
+            a = new ChessObject(VISHOP, pColor);
             a.SetLocation(5, RowIDX);
             pList.Add(a);
 
-            a = new ChessObject(ChessObject.KNIGHT, pColor);
+            a = new ChessObject(KNIGHT, pColor);
             a.SetLocation(6, RowIDX);
             pList.Add(a);
 
-            a = new ChessObject(ChessObject.CASTLE, pColor);
+            a = new ChessObject(CASTLE, pColor);
             a.SetLocation(7, RowIDX);
             pList.Add(a);
         }
 
+        /// <summary>
+        /// Set board initialize setting
+        /// </summary>
         private void SetBoard()
         {
             SetChess();
@@ -800,6 +876,9 @@ namespace ChessGame
             ButtonSet();
         }
 
+        /// <summary>
+        /// Set buttons text - Initialize
+        /// </summary>
         private void ButtonSet()
         {
             ButtonList[0][0].Text = BlueTeamList[8].GetName();
@@ -819,6 +898,11 @@ namespace ChessGame
             ButtonList[7][5].Text = RedTeamList[13].GetName();
             ButtonList[7][6].Text = RedTeamList[14].GetName();
             ButtonList[7][7].Text = RedTeamList[15].GetName();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
