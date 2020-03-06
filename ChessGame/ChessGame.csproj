@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{6F7FB36F-28E8-49B1-BE08-7E695E059E9D}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <RootNamespace>ChessGame</RootNamespace>
     <AssemblyName>ChessGame</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
@@ -32,6 +32,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -46,33 +49,53 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Form1.cs">
+    <Compile Include="Classes\ConnectServer.cs" />
+    <Compile Include="Classes\OpenServer.cs" />
+    <Compile Include="Forms\GameForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="Forms\GameForm.Designer.cs">
+      <DependentUpon>GameForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="SelectObject.cs">
+    <Compile Include="Forms\InitForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SelectObject.Designer.cs">
+    <Compile Include="Forms\InitForm.Designer.cs">
+      <DependentUpon>InitForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\IPSetForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\IPSetForm.Designer.cs">
+      <DependentUpon>IPSetForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SelectObject.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SelectObject.Designer.cs">
       <DependentUpon>SelectObject.cs</DependentUpon>
     </Compile>
-    <Compile Include="MsgForm.cs">
+    <Compile Include="Forms\MsgForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MsgForm.Designer.cs">
+    <Compile Include="Forms\MsgForm.Designer.cs">
       <DependentUpon>MsgForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\GameForm.resx">
+      <DependentUpon>GameForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SelectObject.resx">
+    <EmbeddedResource Include="Forms\InitForm.resx">
+      <DependentUpon>InitForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\IPSetForm.resx">
+      <DependentUpon>IPSetForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SelectObject.resx">
       <DependentUpon>SelectObject.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MsgForm.resx">
+    <EmbeddedResource Include="Forms\MsgForm.resx">
       <DependentUpon>MsgForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -84,7 +107,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <None Include="Chess7-DaE1.ttf">
+    <None Include="Resources\Chess7-DaE1.ttf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Properties\Settings.settings">

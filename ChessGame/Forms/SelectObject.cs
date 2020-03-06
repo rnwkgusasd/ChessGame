@@ -44,6 +44,7 @@ namespace ChessGame
         private void SelectObject_Load(object sender, EventArgs e)
         {
             ObjectArrayComboBox.Items.AddRange(ObjectArray);
+            ObjectArrayComboBox.SelectedIndex = 0;
         }
     }
 }

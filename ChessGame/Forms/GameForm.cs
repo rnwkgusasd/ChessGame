@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 namespace ChessGame
 {
-    public partial class Form1 : Form
+    public partial class GameForm : Form
     {
         #region Member Variables
         public List<Button[]> ButtonList = new List<Button[]>();  // It contains all of board tiles.
@@ -26,6 +26,8 @@ namespace ChessGame
         public int RedMoveCount     = 0; // Red Team Move Count
         public int BlueMoveCount    = 0; // Blue Team Move Count
 
+        public string IPAddress = "";
+
         private int ClickX = 0; // X Position of Click Button
         private int ClickY = 0; // Y Position of Click Button
 
@@ -35,6 +37,9 @@ namespace ChessGame
         private bool ChessDoing = false; // Doing Chess Check
 
         private Color PrevColor; // Color of Previous Click Button
+
+        private ConnectServer mConnect = new ConnectServer();
+
         #endregion
 
         #region Static Variables
@@ -141,13 +146,19 @@ namespace ChessGame
             }
         }
 
-        public Form1()
+        public GameForm(bool pIsHost)
         {
             this.BackColor = Color.Gray;
             InitializeComponent();
 
             InitBoard();
             ShowBoard();
+
+            //if(!pIsHost)
+            //{
+            //    mConnect.Open();
+            //    mConnect.Send("p|0|0|1|0;");
+            //}
         }
 
         /// <summary>
@@ -157,7 +168,7 @@ namespace ChessGame
         {
             ButtonList.Clear();
             PrivateFontCollection CustomFont = new PrivateFontCollection();
-            CustomFont.AddFontFile("Chess7-DaE1.ttf");
+            CustomFont.AddFontFile("Resources\\Chess7-DaE1.ttf");
 
             for (int i = 0; i < BOARD_ROW_COUNT; i++)
             {
@@ -288,11 +299,11 @@ namespace ChessGame
                         {
                             BlueTeamList[i].MoveTo(x, y);
 
-                            if (BlueTeamList[i].GetLocation().Y == BOARD_ROW_COUNT - 1 && BlueTeamList[i].GetName() == "pa")
+                            if (BlueTeamList[i].GetLocation().Y == BOARD_ROW_COUNT - 1 && BlueTeamList[i].GetName().ToUpper() == "P")
                             {
                                 SelectObject frm = new SelectObject();
 
-                                frm.SetArray(new string[] { KNIGHT, VISHOP, CASTLE, QUEEN });
+                                frm.SetArray(new string[] { PAWN, KNIGHT, VISHOP, CASTLE, QUEEN });
 
                                 DialogResult result = frm.ShowDialog();
 
@@ -315,11 +326,11 @@ namespace ChessGame
                         {
                             RedTeamList[i].MoveTo(x, y);
 
-                            if (RedTeamList[i].GetLocation().Y == 0 && RedTeamList[i].GetName() == "pa")
+                            if (RedTeamList[i].GetLocation().Y == 0 && RedTeamList[i].GetName().ToUpper() == "P")
                             {
                                 SelectObject frm = new SelectObject();
 
-                                frm.SetArray(new string[] { KNIGHT, VISHOP, CASTLE, QUEEN });
+                                frm.SetArray(new string[] { PAWN, KNIGHT, VISHOP, CASTLE, QUEEN });
 
                                 DialogResult result = frm.ShowDialog();
 
@@ -373,7 +384,7 @@ namespace ChessGame
                             }
 
                             if (y + 1 < BOARD_ROW_COUNT && x + 1 < BOARD_COLUMN_COUNT && ButtonList[y + 1][x + 1].ForeColor == Color.Red)   ButtonList[y + 1][x + 1].FlatAppearance.BorderColor = Color.Crimson;
-                            if (y + 1 < BOARD_ROW_COUNT && x - 1 > 0 && ButtonList[y + 1][x - 1].ForeColor == Color.Red)                    ButtonList[y + 1][x - 1].FlatAppearance.BorderColor = Color.Crimson;
+                            if (y + 1 < BOARD_ROW_COUNT && x - 1 >= 0 && ButtonList[y + 1][x - 1].ForeColor == Color.Red)                    ButtonList[y + 1][x - 1].FlatAppearance.BorderColor = Color.Crimson;
                         }
                         else
                         {
@@ -385,13 +396,13 @@ namespace ChessGame
 
                             if (pMoveCount == 0) CanMove = 2;
 
-                            for (int i = 0; i <= CanMove && y - i < BOARD_ROW_COUNT && ButtonList[y - i][x].Text == ""; i++)
+                            for (int i = 0; i <= CanMove && y - i >= 0 && ButtonList[y - i][x].Text == ""; i++)
                             {
                                 ButtonList[y - i][x].FlatAppearance.BorderColor = Color.Crimson;
                             }
 
-                            if (y - 1 > 0 && x + 1 < BOARD_COLUMN_COUNT && ButtonList[y - 1][x + 1].ForeColor == Color.Blue)    ButtonList[y - 1][x + 1].FlatAppearance.BorderColor = Color.Crimson;
-                            if (y - 1 > 0 && x - 1 > 0 && ButtonList[y - 1][x - 1].ForeColor == Color.Blue)                     ButtonList[y - 1][x - 1].FlatAppearance.BorderColor = Color.Crimson;
+                            if (y - 1 >= 0 && x + 1 < BOARD_COLUMN_COUNT && ButtonList[y - 1][x + 1].ForeColor == Color.Blue)    ButtonList[y - 1][x + 1].FlatAppearance.BorderColor = Color.Crimson;
+                            if (y - 1 >= 0 && x - 1 >= 0 && ButtonList[y - 1][x - 1].ForeColor == Color.Blue)                     ButtonList[y - 1][x - 1].FlatAppearance.BorderColor = Color.Crimson;
                         }
 
                         ButtonList[y][x].ForeColor = Color.Black;
@@ -899,7 +910,7 @@ namespace ChessGame
             ButtonList[7][6].Text = RedTeamList[14].GetName();
             ButtonList[7][7].Text = RedTeamList[15].GetName();
         }
-
+        
         private void button1_Click(object sender, EventArgs e)
         {
 

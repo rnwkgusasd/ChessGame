@@ -1,6 +1,6 @@
 ﻿namespace ChessGame
 {
-    partial class Form1
+    partial class GameForm
     {
         /// <summary>
         /// 필수 디자이너 변수입니다.
