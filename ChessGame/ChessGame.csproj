@@ -33,7 +33,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject />
+    <StartupObject>ChessGame.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\ConnectServer.cs" />
+    <Compile Include="Classes\GlobalVariable.cs" />
     <Compile Include="Classes\OpenServer.cs" />
     <Compile Include="Forms\GameForm.cs">
       <SubType>Form</SubType>

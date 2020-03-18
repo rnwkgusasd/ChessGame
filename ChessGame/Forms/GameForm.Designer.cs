@@ -91,7 +91,7 @@
             this.lblTeamBlueMove.TabIndex = 5;
             this.lblTeamBlueMove.Text = "Blue Team Move";
             // 
-            // Form1
+            // GameForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -102,8 +102,9 @@
             this.Controls.Add(this.lblBtnText);
             this.Controls.Add(this.lblBtnloc);
             this.Controls.Add(this.button1);
-            this.Name = "Form1";
+            this.Name = "GameForm";
             this.Text = "Form1";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.GameForm_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 
