@@ -41,7 +41,7 @@ namespace ChessGame
 
         private Color PrevColor; // Color of Previous Click Button
 
-        private ConnectServer mConnect = new ConnectServer();
+        //private ConnectServer mConnect = new ConnectServer();
 
         #endregion
 
@@ -128,8 +128,8 @@ namespace ChessGame
             IsLocal = pIsLocal;
             IsHost = pIsHost;
 
-            GlobalVariable.ServerSocket.e_Handler += GetServerClientData;
-            GlobalVariable.ClientSocket.e_Handler += GetServerClientData;
+            //GlobalVariable.ServerSocket.e_Handler += GetServerClientData;
+            //GlobalVariable.ClientSocket.e_Handler += GetServerClientData;
         }
 
         private void GetServerClientData(string pData)
@@ -389,9 +389,9 @@ namespace ChessGame
 
                     if (IsHost)
                     {
-                        GlobalVariable.ServerSocket.Send(GlobalVariable.CreateSendString(tColor, pButton.Text, new Point(PrevX, PrevY), new Point(x, y)));
+                        //GlobalVariable.ServerSocket.Send(GlobalVariable.CreateSendString(tColor, pButton.Text, new Point(PrevX, PrevY), new Point(x, y)));
                     }
-                    else GlobalVariable.ClientSocket.Send(GlobalVariable.CreateSendString(tColor, pButton.Text, new Point(PrevX, PrevY), new Point(x, y)));
+                    //else GlobalVariable.ClientSocket.Send(GlobalVariable.CreateSendString(tColor, pButton.Text, new Point(PrevX, PrevY), new Point(x, y)));
                 }
 
                 return;
@@ -886,11 +886,11 @@ namespace ChessGame
             a.Location = new Point(2, RowIDX);
             pList.Add(a);
 
-            a = new ChessObject(KING, pColor);
+            a = new ChessObject(QUEEN, pColor);
             a.Location = new Point(3, RowIDX);
             pList.Add(a);
 
-            a = new ChessObject(QUEEN, pColor);
+            a = new ChessObject(KING, pColor);
             a.Location = new Point(4, RowIDX);
             pList.Add(a);
 
@@ -918,15 +918,17 @@ namespace ChessGame
             {
                 for (int j = 0; j < BOARD_COLUMN_COUNT; j++)
                 {
-                    if (i == 1) ButtonList[i][j].Text = BlueTeamList[i].Name;
-                    if (i == 6) ButtonList[i][j].Text = RedTeamList[i].Name;
+                    if (i == 0) ButtonList[i][j].Text = BlueTeamList[j + 8].Name;
+                    if (i == 1) ButtonList[i][j].Text = BlueTeamList[j].Name;
+                    if (i == 6) ButtonList[i][j].Text = RedTeamList[j].Name;
+                    if (i == 7) ButtonList[i][j].Text = RedTeamList[j + 8].Name;
 
                     if (i == 0 || i == 1) ButtonList[i][j].ForeColor = Color.Blue;
                     if (i == 6 || i == 7) ButtonList[i][j].ForeColor = Color.Red;
                 }
             }
 
-            ButtonSet();
+            //ButtonSet();
         }
 
         /// <summary>

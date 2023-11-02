@@ -36,7 +36,7 @@ namespace ChessGame
 
             this.Hide();
             
-            GlobalVariable.ServerSocket.Open("127.0.0.1", 11000, 5);
+            //GlobalVariable.ServerSocket.Open("127.0.0.1", 11000, 5);
         }
 
         private string mIP;
@@ -52,7 +52,7 @@ namespace ChessGame
 
                 MainFrm.Show();
 
-                GlobalVariable.ClientSocket.Open("127.0.0.1", 11000);
+                //GlobalVariable.ClientSocket.Open("127.0.0.1", 11000);
 
                 this.Hide();
             }

@@ -49,9 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\ConnectServer.cs" />
     <Compile Include="Classes\GlobalVariable.cs" />
-    <Compile Include="Classes\OpenServer.cs" />
     <Compile Include="Forms\GameForm.cs">
       <SubType>Form</SubType>
     </Compile>
